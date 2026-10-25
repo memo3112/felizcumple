@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Feliz Cumpleaños Julia - Nivel 21!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation;
+        }
+
+        body {
+            background-color: #0b091a;
+            font-family: 'Press Start 2P', monospace;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .arcade-cabinet {
+            background: #120926;
+            border: 4px solid #ffd700;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            border-radius: 10px;
+            max-width: 650px;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 10px;
+            color: #ffd700;
+            text-shadow: 2px 2px #ff0077;
+            margin-bottom: 6px;
+        }
+
+        .instructions {
+            font-size: 6px;
+            color: #b3ffcc;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        /* Pantalla del juego */
+        #game-world {
+            width: 100%;
+            height: 200px;
+            background-image: url('paisaje.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 4px solid #000;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 12px;
+            image-rendering: pixelated;
+        }
+
+        /* Princesa */
+        #princess {
+            position: absolute;
+            bottom: 36px;
+            left: 40px;
+            width: 26px;
+            height: 34px;
+            z-index: 10;
+            background-image: url('princesa.png');
+            background-size: cover;
+            background-position: center;
+            mix-blend-mode: luminosity;
+            filter: contrast(180%);
+            image-rendering: pixelated;
+        }
+
+        /* Cactus gigantes */
+        .obstacle {
+            position: absolute;
+            bottom: 36px;
+            width: 64px;
+            height: 92px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom;
+            z-index: 4;
+            image-rendering: pixelated;
+        }
+
+        #obs1 {
+            left: 180px;
+            background-image: url('obstaculo 1.png');
+        }
+
+        #obs2 {
+            left: 360px;
+            background-image: url('obstaculo 2.png');
+        }
+
+        /* Castillo grande en el piso */
+        #castle-img {
+            position: absolute;
+            bottom: 36px;
+            right: 15px;
+            width: 125px;
+            height: 110px;
+            background-image: url('castillo2.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom;
+            z-index: 5;
+            image-rendering: pixelated;
+        }
+
+        /* Suelo */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 36px;
+            background: #c84c0c;
+            border-top: 4px solid #000;
+            background-image: linear-gradient(90deg, #000 2px, transparent 2px);
+            background-size: 16px 36px;
+            z-index: 6;
+        }
+
+        /* Controles optimizados para celulares y PC */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .ctrl-btn {
+            background-color: #ffd700;
+            color: #120c26;
+            border: 3px solid #ff0077;
+            padding: 14px 18px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 3px 3px 0px #ff0077;
+            user-select: none;
+            flex: 1;
+            border-radius: 6px;
+        }
+        .ctrl-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #ff0077;
+            background-color: #ffcc00;
+        }
+
+        /* Tarjeta de felicitación final */
+        #castle-card-reward {
+            display: none;
+            animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popUp {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .reward-box {
+            font-size: 7px;
+            color: #00ffff;
+            line-height: 2.2;
+            margin-top: 12px;
+            text-align: left;
+            background: rgba(18, 12, 38, 0.95);
+            padding: 15px;
+            border: 3px solid #ffd700;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="arcade-cabinet">
+        <!-- FASE 1: JUEGO -->
+        <div id="game-section">
+            <h1>AYUDA A LA PRINCESA JULIA - NIVEL 21</h1>
+            <p class="instructions">Usa los botones táctiles para moverte y saltar los cactus gigantes hasta el castillo.</p>
+            
+            <div id="game-world">
+                <div id="princess"></div>
+                <div id="obs1" class="obstacle"></div>
+                <div id="obs2" class="obstacle"></div>
+                <div id="castle-img"></div>
+                <div class="ground"></div>
+            </div>
+
+            <div style="font-size: 7px; color: #ffd700; margin-bottom: 8px;">META: LLEGA AL CASTILLO 🏰</div>
+            
+            <div class="controls">
+                <button class="ctrl-btn" ontouchstart="moveLeft()" ontouchend="stopMove()" onmousedown="moveLeft()" onmouseup="stopMove()">◄ IZQ</button>
+                <button class="ctrl-btn" style="background-color: #00ffff;" ontouchstart="jump()" onclick="jump()">SALTAR ▲</button>
+                <button class="ctrl-btn" ontouchstart="moveRight()" ontouchend="stopMove()" onmousedown="moveRight()" onmouseup="stopMove()">DER ►</button>
+            </div>
+        </div>
+
+        <!-- FASE 2: CARTA DE FELICITACIÓN -->
+        <div id="castle-card-reward">
+            <h1 style="color: #ffd700; font-size: 11px;">🏰 ¡CASTILLO ALCANZADO CON ÉXITO! 🏰</h1>
+            <div style="font-size: 24px; margin: 8px;">👑 🎉 🎂</div>
+            <div class="reward-box">
+                <strong style="color: #ffd700; display: block; margin-bottom: 10px; text-align: center; font-size: 8px;">¡FELIZ CUMPLEAÑOS, JULIA! (YA ESTAS EN EL NIVEL 21)</strong>
+                Superaste todas las plataformas de la UNEFA, esquivaste cada obstáculo del camino y completaste el nivel con éxito absoluto.<br><br>
+                Que este nuevo año de vida venga cargado de metas cumplidas, mucha salud, momentos alegres y cero estrés con los profesores( cero estres please). ¡Pásala increíble este domingo en tu día!💜
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let princess = document.getElementById('princess');
+        let posX = 40;
+        let posY = 36;
+        let isJumping = false;
+        let moveDir = 0;
+        let gameActive = true;
+        let jumpVelocity = 0;
+
+        // Soporte para teclado de PC por si acaso
+        document.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') moveDir = 3;
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') moveDir = -3;
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') jump();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if ((e.code === 'ArrowRight' || e.code === 'KeyD') && moveDir > 0) moveDir = 0;
+            if ((e.code === 'ArrowLeft' || e.code === 'KeyA') && moveDir < 0) moveDir = 0;
+        });
+
+        function moveLeft() { if (gameActive) moveDir = -3; }
+        function moveRight() { if (gameActive) moveDir = 3; }
+        function stopMove() { moveDir = 0; }
+
+        function jump() {
+            if (isJumping || !gameActive) return;
+            isJumping = true;
+            jumpVelocity = 13;
+        }
+
+        function updateGame() {
+            if (!gameActive) return;
+
+            posX += moveDir;
+            if (posX < 10) posX = 10;
+            if (posX > 510) posX = 510;
+            princess.style.left = posX + 'px';
+
+            if (isJumping) {
+                posY += jumpVelocity;
+                jumpVelocity -= 0.5;
+                
+                if (posY <= 36) {
+                    posY = 36;
+                    isJumping = false;
+                    jumpVelocity = 0;
+                }
+                princess.style.bottom = posY + 'px';
+            }
+
+            // Colisión con cactus gigantes
+            if (!isJumping && posY <= 36) {
+                if ((posX >= 165 && posX <= 235) || (posX >= 345 && posX <= 415)) {
+                    posX -= moveDir;
+                    princess.style.left = posX + 'px';
+                }
+            }
+
+            // Llegada a la meta del castillo
+            if (posX >= 460) {
+                winGame();
+            }
+
+            requestAnimationFrame(updateGame);
+        }
+
+        function winGame() {
+            gameActive = false;
+            document.getElementById('game-section').style.display = 'none';
+            document.getElementById('castle-card-reward').style.display = 'block';
+        }
+
+        requestAnimationFrame(updateGame);
+    </script>
+</body>
+</html>
